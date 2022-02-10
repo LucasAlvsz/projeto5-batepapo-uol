@@ -1,13 +1,104 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <title>Bate-Papo UOL</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+    <!-- Bonûs -->
+    <div class="login hidden">
+        <div class="logo">
+            <img src="img/logo-uol.png" alt="logo-uol">
+        </div>
+        <div class="options">
+            <form action=""></form>
+            <input type="text" placeholder="Digite seu nome">
+            <input id="submit" type="submit" value="Entrar">
+            <button>Entrar</button>
+        </div>
+        
+
+    </div>
+    <div class="overlay hidden">
+        <div class="shadow"></div>
+        <div class="activity">
+            <div class="title">
+                <p>Escolha um contato para enviar mensagem:</p>
+            </div>
+            <div class="users">
+                <div class="option all">
+                    <ion-icon name="people" onclick="this"></ion-icon>
+                    <p>Todos</p>
+                </div>
+                <div class="option">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>João</p>
+                </div>
+                <div class="option">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>Maria</p>
+                </div>
+            </div>
+            <div class="visibility">
+                <div class="title"><p>Escolha a visibilidade:</p></div >
+                <div class="option public">
+                    <ion-icon name="lock-open"></ion-icon>
+                    <p>Público</p>
+                </div>
+                <div class="option privately">
+                    <ion-icon name="lock-closed"></ion-icon>
+                    <p>reservadamente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fim Bônus -->
+    <header>
+        <img src="img/logo-uol.png" alt="logo bate-papo uol">
+        <ion-icon name="people" onclick="this"></ion-icon>
+    </header>
+
+    <main>
+        <div class="messages">
+            <div class="message status">
+                <p><span class="hour">(09:21:45)</span> <span class="user">João</span> entra na sala...</p>
+            </div>
+            <div class="message">
+                <p><span class="hour">(09:21:45)</span> <span class="user">João</span> para: <span
+                        class="user">Todos</span> Bom dia!</p>
+            </div>
+            <div class="message">
+                <p><span class="hour">(09:21:45)</span> <span class="user">Maria</span> para: <span
+                        class="user">João</span> Oi João :)</p>
+            </div>
+            <div class="message private">
+                <p><span class="hour">(09:21:45)</span> <span class="user">João</span> reservadamente para: <span
+                        class="user">Maria</span> Oi gatinha quer tc?</p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <input placeholder="Escreva aqui..." type="text">
+        <input type="submit" value="" onclick="sendMessage()">
+        <ion-icon class="enviar" name="paper-plane-outline"></ion-icon>
+    </footer>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+    
     
 </body>
+
 </html>
