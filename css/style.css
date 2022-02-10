@@ -26,6 +26,9 @@ header img {
     width: 75px;
     height: 53px;
 }
+header ion-icon:hover{
+    cursor: pointer;
+}
 
 main {
     width: 100%;
@@ -117,6 +120,7 @@ footer ion-icon {
 /* Bônus */
 
 .hidden {
+    visibility: hidden;
     display: none;
 }
 
@@ -157,8 +161,7 @@ footer ion-icon {
 .login .options input::placeholder{
     color: #AEAEAE;
 }
-input #submit{
-    background-color: red;
+.login input:nth-child(2){
     width: 109px;
     height: 45px;
     font-size: 18px;
@@ -167,19 +170,31 @@ input #submit{
     border-radius: 9px;
     color: #696969;
 }
+.login p{
+    width: 230px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: rgba(219, 55, 33, 0.6);
+    margin-top: 30px;
+}
 .overlay {
-    background-color: rgba(0, 0, 0, 0.6);
     width: 100vw;
     height: 100vh;
-    justify-content: end;
+    display: flex;
     position: absolute;
     top: 0;
     z-index: 1;
 }
-
-.activity {
-    position: absolute;
-    right: 0;
+.shadow{
+    background-color: rgba(0, 0, 0, 0.6);
+    width: calc(100vw - 259px);
+}
+.shadow:hover{
+    cursor: pointer;
+}
+.activitys {
     background-color: #fff;
     width: 259px;
     height: inherit;
@@ -190,7 +205,7 @@ input #submit{
     color: #000;
 }
 
-.activity .title {
+.activitys .title {
     width: auto;
     height: 84px;
     font-weight: 700;
@@ -200,7 +215,7 @@ input #submit{
     padding: 35px;
 }
 
-.activity .option {
+.activitys .option {
     width: auto;
     min-height: 36px;
     display: flex;
@@ -209,7 +224,7 @@ input #submit{
     padding: 0 0 0 17px;
 }
 
-.activity ion-icon {
+.activitys ion-icon {
     font-size: 25px;
     margin-right: 8px;
 }
