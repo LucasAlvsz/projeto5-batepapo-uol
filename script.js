@@ -1,4 +1,4 @@
-const MAGIC = false
+const MAGIC = true
 // Entrar na sala
 let userName
 let nameObject = {
@@ -9,11 +9,11 @@ function login() {
     // Login ai teclar "Enter"
     valueInput.addEventListener('keydown', function (event) {
         if (event.keyCode == 13) {
-            console.log("teste")
             userName = valueInput.value
             valueInput.value = ""
             nameObject.name = userName
             axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+            return true
         }
     })
     // Login ao clicar em "Entrar"
@@ -22,6 +22,7 @@ function login() {
         valueInput.value = ""
         nameObject.name = userName
         axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+        return true
     }
 }
 function serverTestLoginSuccess() {
@@ -37,9 +38,13 @@ function serverTestLoginError() {
 // status usuario
 function userStatus() {
     nameObject.name = userName
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject)
+    axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject).then(teste())
+}
+function teste(){
+    console.log("status enviado");
 }
 if (MAGIC) {
+    console.log("status");
     setInterval(() => {
         userStatus()
     }, 4000);
@@ -52,48 +57,48 @@ function searchMessages() {
 if (MAGIC) {
     setInterval(() => {
         searchMessages()
-    }, 3000);
+    }, 500);
 }
 let count = 0
 let messageListLog = []
 let messagesList = []
 let filteredMessages = []
-
 function renderTheMessages(success) {
     messagesList = success.data
     const messages = document.querySelector(".messages")
-    filteredMessages = messagesList.filter(x => !messageListLog.includes(x))
-    console.log("filteredMessages: " + filteredMessages[99]);
-    console.log("messagesList: " + messagesList[99]);
-    console.log("messageListLog: " + messageListLog[99]);
-    for (let i = 100; i <= filteredMessages.length; ++i) {
-        if (filteredMessages.type == "status") {
+    //filteredMessages = messagesList.filter(x => !messageListLog.includes(x))
+    //for (let i = 0; i <= messagesList.length; ++i) {
+        //console.log("entrei");
+        if(count == 0)
+            messageListLog = messagesList.slice()
+        if (messagesList[99].text != messageListLog[99].text){
+        let i = 99
+        if (messagesList[i].type == "status") {
             messages.innerHTML +=
                 `
             <div class="message status">
-                <p><span class="hour">(${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span>${filteredMessages.text}</p>
+                <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span>${messagesList[i].text}</p>
             </div>
             `
-        } else if (filteredMessages.type == "message") {
+        } else if (messagesList[i].type == "message") {
             messages.innerHTML +=
                 `
             <div class="message">
-            <p><span class="hour">(${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span> para <span class="user"> ${filteredMessages.to}: </span> ${filteredMessages.text} </p>
+            <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
             </div>
             `
-        } else if (filteredMessages.type == "private_message" && filteredMessages.to == userName) {
+        } else if (messagesList[i].type == "private_message" && messagesList[i].to == userName) {
             messages.innerHTML +=
                 `
             <div class="message private">
-            <p><span class="hour"> (${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span> reservadamente para <span class="user"> ${filteredMessages.to}: </span> ${filteredMessagesList[i].text} </p>
+            <p><span class="hour"> (${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> reservadamente para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
             </div>
             `
         }
         messages.scrollIntoView({ block: "end", behavior: "smooth" });
     }
-    if (count == 0)
-        messageListLog = messagesList.slice()
-    count += 1
+    count +=1
+    messageListLog = messagesList.slice()
 }
 
 
@@ -112,6 +117,7 @@ function sendMessage() {
             axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
         }
     })
+    // Enviar mensagem ao clicar no icone
     if (valueInput.value != "") {
         const messageObjetc = {
             from: userName,
@@ -125,7 +131,7 @@ function sendMessage() {
 }
 
 function testarEnvio(teste) {
-    console.log(teste + "dale");
+    console.log("Mensagem enviada");
 }
 
 // bonus 10s
@@ -140,8 +146,8 @@ function renderUsers(users) {
         usersClass.innerHTML +=
             `
         <div class="option">
-                    <ion-icon name="person-circle"></ion-icon>
-                    <p>${users[i].name}</p>
+                    <ion-icon name="person-circle" onclick=""></ion-icon>
+                    <p onclick="">${users[i].name}</p>
                 </div>
         `
     }
@@ -154,9 +160,13 @@ function activity() {
 }
 
 function exitActivity(shadowClass) {
-    console.log(shadowClass.parentNode);
     shadowClass.parentNode.classList.add("hidden")
+}
+
+function selectUser(){
+    
 }
 
 
 login()
+searchUsers()

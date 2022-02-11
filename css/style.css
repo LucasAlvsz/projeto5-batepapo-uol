@@ -232,16 +232,29 @@ footer ion-icon {
     margin-right: 8px;
 }
 
+.activity{
+    max-height: 74%;
+    overflow-y: auto;
+}
+
 .visibility .title {
     height: 66px;
     justify-content: center;
 }
 
-.visibility .option {
-    width: auto;
-    min-height: 36px;
-}
-
 .visibility ion-icon {
     font-size: 22px
+}
+
+.selected{
+    /* background-color: red; */
+    width: auto;
+    height: 20px;
+    position: absolute;
+    right: 25px;
+    margin-bottom: 3px;
+}
+.selected ion-icon{
+   font-size: 18px;
+    color: #28BB25;
 }
