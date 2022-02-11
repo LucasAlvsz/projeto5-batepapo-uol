@@ -17,7 +17,7 @@
 
 <body>
     <!-- Bonûs -->
-    <div class="login hidden" >
+    <div class="login " >
         <div class="logo">
             <img src="img/logo-uol.png" alt="logo-uol">
         </div>
@@ -82,7 +82,7 @@
         </div>
     </main>
     <footer>
-        <input placeholder="Escreva aqui..." type="text">
+        <input placeholder="Escreva aqui..." type="text" onclick="sendMessage()">
         <input type="submit" value="" onclick="sendMessage()">
         <ion-icon class="enviar" name="paper-plane-outline"></ion-icon>
     </footer>
@@ -90,8 +90,6 @@
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>
-    
-    
 </body>
 
 </html>

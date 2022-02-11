@@ -170,6 +170,9 @@ footer ion-icon {
     border-radius: 9px;
     color: #696969;
 }
+.login input:nth-child(2):hover{
+    cursor: pointer;
+}
 .login p{
     width: 230px;
     height: 50px;

@@ -1,18 +1,30 @@
-let messagesListLength = 0
 const MAGIC = false
 // Entrar na sala
-let userName = ""
+let userName
 let nameObject = {
     name: userName
 }
 function login() {
     const valueInput = document.querySelector(".login input")
-    userName = valueInput.value
-    valueInput.value = ""
-    nameObject.name = userName
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+    // Login ai teclar "Enter"
+    valueInput.addEventListener('keydown', function (event) {
+        if (event.keyCode == 13) {
+            console.log("teste")
+            userName = valueInput.value
+            valueInput.value = ""
+            nameObject.name = userName
+            axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+        }
+    })
+    // Login ao clicar em "Entrar"
+    if (valueInput.value != "") {
+        userName = valueInput.value
+        valueInput.value = ""
+        nameObject.name = userName
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+    }
 }
-function serverTestLoginSuccess(){
+function serverTestLoginSuccess() {
     const loginClass = document.querySelector(".login")
     loginClass.classList.add("hidden")
 }
@@ -27,65 +39,89 @@ function userStatus() {
     nameObject.name = userName
     axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject)
 }
-if (MAGIC){
-setInterval(() => {
-    userStatus()
-}, 4000);}
+if (MAGIC) {
+    setInterval(() => {
+        userStatus()
+    }, 4000);
+}
 // Faz uma requisição ao servidor para procurar pelas mensagens
 function searchMessages() {
     let promisse = axios.get("https://mock-api.driven.com.br/api/v4/uol/messages")
-    promisse.then(renderTheMessage)
+    promisse.then(renderTheMessages)
 }
-if (MAGIC){
-setInterval(() => {
-    searchMessages()
-}, 3000);}
+if (MAGIC) {
+    setInterval(() => {
+        searchMessages()
+    }, 3000);
+}
+let count = 0
+let messageListLog = []
+let messagesList = []
+let filteredMessages = []
 
-let armz99 = ""
-function renderTheMessage(success) {
-    let messagesList = success.data
+function renderTheMessages(success) {
+    messagesList = success.data
     const messages = document.querySelector(".messages")
-    console.log(success.data)
-    /*
-for (let i = 0; i <= messagesList.length; ++i) {
-    if (messagesList[i].type == "status") {
-        messages.innerHTML +=
+    filteredMessages = messagesList.filter(x => !messageListLog.includes(x))
+    console.log("filteredMessages: " + filteredMessages[99]);
+    console.log("messagesList: " + messagesList[99]);
+    console.log("messageListLog: " + messageListLog[99]);
+    for (let i = 100; i <= filteredMessages.length; ++i) {
+        if (filteredMessages.type == "status") {
+            messages.innerHTML +=
+                `
+            <div class="message status">
+                <p><span class="hour">(${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span>${filteredMessages.text}</p>
+            </div>
             `
-    <div class="message status">
-            <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span>${messagesList[i].text}</p>
-        </div>
-    `
-    } else if (messagesList[i].type == "message") {
-        messages.innerHTML +=
+        } else if (filteredMessages.type == "message") {
+            messages.innerHTML +=
+                `
+            <div class="message">
+            <p><span class="hour">(${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span> para <span class="user"> ${filteredMessages.to}: </span> ${filteredMessages.text} </p>
+            </div>
             `
-        <div class="message">
-            <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
-        </div>
-        `
-    } else if (messagesList[i].type == "private_message" && messagesList[i].to == userName) {
-        messages.innerHTML +=
+        } else if (filteredMessages.type == "private_message" && filteredMessages.to == userName) {
+            messages.innerHTML +=
+                `
+            <div class="message private">
+            <p><span class="hour"> (${filteredMessages.time}) </span> <span class="user"> ${filteredMessages.from} </span> reservadamente para <span class="user"> ${filteredMessages.to}: </span> ${filteredMessagesList[i].text} </p>
+            </div>
             `
-        <div class="message private">
-            <p><span class="hour"> (${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> reservadamente para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
-        </div>
-        `
+        }
+        messages.scrollIntoView({ block: "end", behavior: "smooth" });
     }
-    messages.scrollIntoView({ block: "end", behavior: "smooth" });
-}}*/
-    armz99 = messagesList[99]
-    console.log(armz99 + "<--armz|| messageslist99-->" + messagesList[99])
+    if (count == 0)
+        messageListLog = messagesList.slice()
+    count += 1
 }
+
 
 function sendMessage() {
     const valueInput = document.querySelector("footer input")
-    const messageObjetc = {
-        from: userName,
-        to: "Todos",
-        text: valueInput.value,
-        type: "message"
+    // Enviar mensagem teclando "Enter"
+    valueInput.addEventListener('keydown', function (event) {
+        if (event.keyCode == 13) {
+            const messageObjetc = {
+                from: userName,
+                to: "Todos",
+                text: valueInput.value,
+                type: "message"
+            }
+            valueInput.value = ""
+            axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
+        }
+    })
+    if (valueInput.value != "") {
+        const messageObjetc = {
+            from: userName,
+            to: "Todos",
+            text: valueInput.value,
+            type: "message"
+        }
+        valueInput.value = ""
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
     }
-    valueInput.value = ""
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
 }
 
 function testarEnvio(teste) {
@@ -93,16 +129,16 @@ function testarEnvio(teste) {
 }
 
 // bonus 10s
-function searchUsers(){
+function searchUsers() {
     axios.get("https://mock-api.driven.com.br/api/v4/uol/participants").then(renderUsers)
 }
 
-function renderUsers(users){
+function renderUsers(users) {
     users = users.data
     const usersClass = document.querySelector(".activity")
-    for (let i = 0;  i < users.length; ++i) {
-        usersClass.innerHTML += 
-        `
+    for (let i = 0; i < users.length; ++i) {
+        usersClass.innerHTML +=
+            `
         <div class="option">
                     <ion-icon name="person-circle"></ion-icon>
                     <p>${users[i].name}</p>
@@ -111,14 +147,16 @@ function renderUsers(users){
     }
 }
 
-function activity(){
+function activity() {
     const activityClass = document.querySelector(".overlay")
     activityClass.classList.remove("hidden")
 
 }
 
-function exitActivity(shadowClass){
+function exitActivity(shadowClass) {
     console.log(shadowClass.parentNode);
     shadowClass.parentNode.classList.add("hidden")
 }
-searchUsers()
+
+
+login()
