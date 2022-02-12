@@ -48,13 +48,18 @@ footer {
     position: fixed;
     bottom: 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* superior | direita | inferior | esquerda */
+    flex-direction: column;
     padding: 17px;
 }
-
+footer p{
+    font-weight: normal;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 25px;
+    margin-top: 5px;
+}
 footer input {
+    max-width: 90%;
     font-size: 18px;
     font-weight: 400;
     line-height: 21px;
@@ -71,7 +76,7 @@ footer input:nth-child(2){
     width: 25px;
     height: 25px;
     position: absolute;
-    z-index: 4;
+    z-index: 2;
     top: 26px;
     right: 17px;
 }
@@ -81,6 +86,9 @@ footer input:nth-child(2):hover{
 
 footer ion-icon {
     font-size: 26px;
+    position: absolute;
+    top: 26px;
+    right: 17px;
 }
 
 .messages {
@@ -226,7 +234,12 @@ footer ion-icon {
     /* superior | direita | inferior | esquerda */
     padding: 0 0 0 17px;
 }
-
+.option p:hover{
+    cursor: pointer;
+}
+.option ion-icon:hover{
+    cursor: pointer;
+}
 .activitys ion-icon {
     font-size: 25px;
     margin-right: 8px;
@@ -254,7 +267,7 @@ footer ion-icon {
     right: 25px;
     margin-bottom: 3px;
 }
-.selected ion-icon{
+.selected svg{
    font-size: 18px;
     color: #28BB25;
 }

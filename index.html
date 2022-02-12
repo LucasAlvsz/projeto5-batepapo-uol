@@ -17,7 +17,7 @@
 
 <body>
     <!-- Bonûs -->
-    <div class="login " >
+    <div class="login ">
         <div class="logo">
             <img src="img/logo-uol.png" alt="logo-uol">
         </div>
@@ -26,33 +26,45 @@
             <input type="submit" value="Entrar" onclick="login()">
             <p class="hidden">Este nome de usuario já existe Por favor selecione outro!</p>
         </div>
-        
+
 
     </div>
     <div class="overlay hidden">
         <div class="shadow" onclick="exitActivity(this)"></div>
         <div class="activitys">
-        <div class="activity">
-            <div class="title">
-                <p>Escolha um contato para enviar mensagem:</p>
-            </div>
-            <div class="users">
-                <div class="option all">
-                    <ion-icon name="people" onclick="this"></ion-icon>
-                    <p>Todos</p>
+            <div class="activity">
+                <div class="title">
+                    <p>Escolha um contato para enviar mensagem:</p>
+                </div>
+                <div class="users">
+                    <div class="option">
+                        <ion-icon name="people" onclick="selectUser(this)"></ion-icon>
+                        <p onclick="selectUser(this)">Todos</p>
+                        <div class="selected">
+                            <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                            <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
             <div class="visibility">
-                <div class="title"><p>Escolha a visibilidade:</p></div >
-                <div class="option public" >
-                    <ion-icon name="lock-open" onclick=""></ion-icon>
-                    <p onclick="">Público</p>
+                <div class="title">
+                    <p>Escolha a visibilidade:</p>
                 </div>
-                <div class="option privately">
-                    <ion-icon name="lock-closed" onclick=""></ion-icon>
-                    <p onclick="">Reservadamente</p>
-                    
+                <div class="option public">
+                    <ion-icon name="lock-open" onclick="selectVisibility(this)"></ion-icon>
+                    <p onclick="selectVisibility(this)">Público</p>
+                    <div class="selected">
+                        <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                        <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="option privated">
+                    <ion-icon name="lock-closed" onclick="selectVisibility(this)"></ion-icon>
+                    <p onclick="selectVisibility(this)">Reservadamente</p>
+
 
                 </div>
             </div>
@@ -66,13 +78,14 @@
 
     <main>
         <div class="messages">
-            </div>
+        </div>
         </div>
     </main>
     <footer>
-        <input placeholder="Escreva aqui..." type="text" onclick="sendMessage()">
+        <input placeholder="Escreva aqui..." type="text">
         <input type="submit" value="" onclick="sendMessage()">
         <ion-icon class="enviar" name="paper-plane-outline"></ion-icon>
+        <p>Enviando para <span>Todos</span> <b>(público)</b></p>
     </footer>
     <!-- Scripts -->
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
