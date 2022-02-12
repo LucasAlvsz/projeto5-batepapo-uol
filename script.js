@@ -1,62 +1,75 @@
+// Declarando Variaveis
+// -------- MAGIC NUMBERS ---------- \\
 const MAGIC = true
 const MESSAGESUPDATETIME = 3000
-const STATUSUPDATETIME = 50000
+const STATUSUPDATETIME = 4000
 const USERSONLINEUPDATETIME = 10000
-
-// Entrar na sala
+const TEMPOLOADING = 10000
+// ---------------------------------- \\
 let userName
 let nameObject = {
-    name: userName
+    name: ""
 }
+let messageObjetc = {
+    from: "",
+    to: "",
+    text: "",
+    type: ""
+}
+let logged = false
+let userSelected = "Todos"
+let messageVisibility = "message"
+let usersListLog = []
+
+// Realizar o login
 function login() {
     const valueInput = document.querySelector(".login input")
-    // Login ai teclar "Enter"
-    valueInput.addEventListener('keydown', function (event) {
-        if (event.keyCode == 13) {
-            userName = valueInput.value
-            valueInput.value = ""
-            nameObject.name = userName
-            axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
-            return true
-        }
-    })
-    // Login ao clicar em "Entrar"
     if (valueInput.value != "") {
         userName = valueInput.value
         valueInput.value = ""
         nameObject.name = userName
         axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
-        return true
     }
 }
+logged = true
+// Logado com Sucesso
 function serverTestLoginSuccess() {
     const loginClass = document.querySelector(".login")
-    loginClass.classList.add("hidden")
+    document.querySelector(".login .options").remove()
+    loginClass.innerHTML +=
+        `
+    <div class="loading">
+            <img src="img/loading.gif" alt="carregando">
+            <p>Entrando...</p>
+        </div> 
+    `
+    setTimeout(() => {
+        loginClass.classList.add("hidden")
+    }, TEMPOLOADING);
 }
+// Erro ao logar
 function serverTestLoginError() {
     const errorMsg = document.querySelector(".login .hidden")
     errorMsg.classList.remove("hidden")
     login()
 }
 
-// status usuario
+// Atualiza status do usuario para o servidor
 function userStatus() {
     nameObject.name = userName
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject).then(teste()).catch(reload)
+    axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject).then().catch(offline)
 }
-function teste() {
-    console.log("status enviado");
-}
-function reload() {
-    console.log("reload")
+// Caso o usuario esteja offline
+function offline() {
     location.reload();
 }
-if (MAGIC) {
+if (MAGIC && logged) {
     console.log("status");
     setInterval(() => {
         userStatus()
-    }, 4000);
+    }, STATUSUPDATETIME);
 }
+
 // Faz uma requisição ao servidor para procurar pelas mensagens
 function searchMessages() {
     let promisse = axios.get("https://mock-api.driven.com.br/api/v4/uol/messages")
@@ -64,7 +77,6 @@ function searchMessages() {
 }
 if (MAGIC) {
     setInterval(() => {
-        console.log("Procurando mensagens")
         searchMessages()
     }, MESSAGESUPDATETIME);
 }
@@ -119,42 +131,41 @@ function renderMessages(success) {
     //messageListLog = messagesList[99].from + messagesList[99].text + messagesList[99].time
 }
 
-let userSelected = "Todos"
-let messageVisibility = "message"
 function sendMessage() {
     const valueInput = document.querySelector("footer input")
     console.log(userName, userSelected, valueInput.value, messageVisibility + "  aaaaaaaaaaaaaa");
-    // Enviar mensagem teclando "Enter"
+    //Enviar mensagem teclando "Enter"
     valueInput.addEventListener('keydown', function (event) {
-        if (event.keyCode == 13) {
-            const messageObjetc = {
+        if (event.keyCode == 13 && valueInput.value != "") {
+            messageObjetc = {
                 from: userName,
                 to: userSelected,
                 text: valueInput.value,
                 type: messageVisibility
             }
             valueInput.value = ""
-            axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
+            axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then()
         }
     })
-    // Enviar mensagem ao clicar no icone
+    //Enviar mensagem ao clicar no icone
     if (valueInput.value != "") {
-        const messageObjetc = {
+        messageObjetc = {
             from: userName,
             to: userSelected,
             text: valueInput.value,
             type: messageVisibility
         }
         valueInput.value = ""
-        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(testarEnvio)
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then().catch(errorMesage)
     }
 }
 
-function testarEnvio(teste) {
-    console.log("Mensagem enviada");
+function errorMesage(error) {
+    console.log(error.request);
 }
 
-// bonus 10s
+
+// Procura pelos usuarios online a cada 10s
 function searchUsers() {
     axios.get("https://mock-api.driven.com.br/api/v4/uol/participants").then(renderUsers)
 }
@@ -163,12 +174,11 @@ setInterval(() => {
     searchUsers()
 }, USERSONLINEUPDATETIME);
 
-let usersListLog = []
+
 function renderUsers(users) {
     users = users.data
     const usersClass = document.querySelector(".activity .users")
     let filteredUsers = users.filter(filterUsers);
-    console.log(filteredUsers);
     for (let i = 0; i < filteredUsers.length; ++i) {
         usersClass.innerHTML +=
             `
@@ -231,7 +241,6 @@ function selectVisibility(element) {
             </svg>
         </div>
         `
-
     }
     console.log(visibility);
     if (visibility == "Reservadamente") {
@@ -243,6 +252,5 @@ function selectVisibility(element) {
         messageVisibility = "message"
     }
 }
-
-login()
-
+//chamando para carregar o enter
+sendMessage()
