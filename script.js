@@ -2,7 +2,7 @@
 // -------- MAGIC NUMBERS ---------- \\
 const MAGIC = true
 const MESSAGESUPDATETIME = 3000
-const STATUSUPDATETIME = 4000
+const STATUSUPDATETIME = 5000
 const USERSONLINEUPDATETIME = 10000
 const TEMPOLOADING = 10000
 // ---------------------------------- \\
@@ -20,6 +20,9 @@ let logged = false
 let userSelected = "Todos"
 let messageVisibility = "message"
 let usersListLog = []
+let index = 0
+let firstRunRenderMessages = true
+let messageListLog = ""
 
 // Realizar o login
 function login() {
@@ -31,9 +34,9 @@ function login() {
         axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
     }
 }
-logged = true
 // Logado com Sucesso
 function serverTestLoginSuccess() {
+    logged = true
     const loginClass = document.querySelector(".login")
     document.querySelector(".login .options").remove()
     loginClass.innerHTML +=
@@ -56,52 +59,48 @@ function serverTestLoginError() {
 
 // Atualiza status do usuario para o servidor
 function userStatus() {
-    nameObject.name = userName
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject).then().catch(offline)
+    if (logged) {
+        nameObject.name = userName
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/status", nameObject).then().catch(offline)
+    }
 }
 // Caso o usuario esteja offline
 function offline() {
     location.reload();
 }
-if (MAGIC && logged) {
-    console.log("status");
-    setInterval(() => {
-        userStatus()
-    }, STATUSUPDATETIME);
-}
+// A cada 5 segundos verifica se o usuario esta online
+setInterval(() => {
+    userStatus()
+}, STATUSUPDATETIME);
+
 
 // Faz uma requisição ao servidor para procurar pelas mensagens
 function searchMessages() {
     let promisse = axios.get("https://mock-api.driven.com.br/api/v4/uol/messages")
     promisse.then(renderMessages)
 }
-if (MAGIC) {
-    setInterval(() => {
-        searchMessages()
-    }, MESSAGESUPDATETIME);
-}
-let index = 0
-let firstRun = true
-let messageListLog = ""
-let filteredMessages = []
+// A cada 3 segundos verifica se existem novas mensagens
+setInterval(() => {
+    searchMessages()
+}, MESSAGESUPDATETIME);
+
+// Mostra as mensagens na tela
 function renderMessages(success) {
     let messagesList = success.data
     const messages = document.querySelector(".messages")
     // Verifica se é a primeira vez que a função é executada
-    /*if (!firstRun) {
+    if (!firstRunRenderMessages) {
         // Compara o ultimo elemento da lista de mensagens com a ultima mensagem armazenada
-        for (let i = 99; i; i--) {
+        for (let i = (messagesList.length - 1); i; i--) {
             if (messageListLog == (messagesList[i].from + messagesList[i].text + messagesList[i].time)) {
-                i = index
-                console.log("vou parar");
+                index = i + 1
                 break
-            }else if(i == 0){
-                i = index
+            } else if (i == 0) {
+                index = i
             }
         }
-    }*/
-    messages.innerHTML = ""
-    for (let i = 0; i < messagesList.length; ++i) {
+    }
+    for (let i = index; i <= messagesList.length - 1; i++) {
         if (messagesList[i].type == "status") {
             messages.innerHTML +=
                 `
@@ -124,18 +123,19 @@ function renderMessages(success) {
             </div>
             `
         }
-        //, behavior: "smooth" 
-        messages.scrollIntoView({ block: "end" });
+        messages.scrollIntoView({ block: "end", behavior: "smooth"});
     }
-    //firstRun = false
-    //messageListLog = messagesList[99].from + messagesList[99].text + messagesList[99].time
+    firstRunRenderMessages = false
+    // Armazena o conteudo da ultima mensagem
+    let lastMessageIndex = messagesList.length - 1
+    messageListLog = (messagesList[lastMessageIndex].from + messagesList[lastMessageIndex].text + messagesList[lastMessageIndex].time)
 }
-
+// Envia uma mensagem
 function sendMessage() {
     const valueInput = document.querySelector("footer input")
-    console.log(userName, userSelected, valueInput.value, messageVisibility + "  aaaaaaaaaaaaaa");
     //Enviar mensagem teclando "Enter"
     valueInput.addEventListener('keydown', function (event) {
+        // Caso pressione enter 
         if (event.keyCode == 13 && valueInput.value != "") {
             messageObjetc = {
                 from: userName,
@@ -156,40 +156,38 @@ function sendMessage() {
             type: messageVisibility
         }
         valueInput.value = ""
-        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then().catch(errorMesage)
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then()
     }
 }
 
-function errorMesage(error) {
-    console.log(error.request);
-}
-
-
-// Procura pelos usuarios online a cada 10s
+// Faz uma requisição para procurar pela lista de usuarios online
 function searchUsers() {
     axios.get("https://mock-api.driven.com.br/api/v4/uol/participants").then(renderUsers)
 }
-
+// Procura pelos usuarios online a cada 10s
 setInterval(() => {
     searchUsers()
 }, USERSONLINEUPDATETIME);
 
-
+// Mostra os usuarios na tela
 function renderUsers(users) {
     users = users.data
-    const usersClass = document.querySelector(".activity .users")
+    const usersClass = document.querySelector(".activitys .users")
+    // filtra usuarios que ja existem na lista
     let filteredUsers = users.filter(filterUsers);
     for (let i = 0; i < filteredUsers.length; ++i) {
         usersClass.innerHTML +=
-            `
+        `
         <div class="option">
                     <ion-icon name="person-circle" onclick="selectUser(this)"></ion-icon>
                     <p onclick="selectUser(this)">${filteredUsers[i].name}</p>
                 </div>
         `
     }
+    // armazena lista de usuarios
     usersListLog = users.slice()
 }
+// Função do filter
 function filterUsers(users) {
     for (let i = 0; i < usersListLog.length; i++) {
         if (users.name == usersListLog[i].name)
@@ -197,17 +195,16 @@ function filterUsers(users) {
     }
     return true
 }
-
+// Função que mostra barra de atividade
 function activity() {
     const activityClass = document.querySelector(".overlay")
     activityClass.classList.remove("hidden")
-
 }
-
+// Função que sai da barra de atividade
 function exitActivity(shadowClass) {
     shadowClass.parentNode.classList.add("hidden")
 }
-
+// Função para selecionar um usuario
 function selectUser(element) {
     const optionClass = element.parentNode
     const usersClass = optionClass.parentNode
@@ -227,6 +224,7 @@ function selectUser(element) {
     document.querySelector("footer p span").innerHTML = userName
     userSelected = userName
 }
+// Função que seleciona a visibilidade da mensagem
 function selectVisibility(element) {
     const optionClass = element.parentNode
     const visibilityClass = optionClass.parentNode
@@ -242,7 +240,6 @@ function selectVisibility(element) {
         </div>
         `
     }
-    console.log(visibility);
     if (visibility == "Reservadamente") {
         document.querySelector("footer p b").innerHTML = "(reservadamente)"
         messageVisibility = "private_message"
@@ -252,5 +249,5 @@ function selectVisibility(element) {
         messageVisibility = "message"
     }
 }
-//chamando para carregar o enter
+// Chamando para carregar o "enter"
 sendMessage()
