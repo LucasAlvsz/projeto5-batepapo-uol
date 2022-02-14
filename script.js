@@ -25,7 +25,6 @@ let messageListLog = ""
 function login() {
     const valueInput = document.querySelector(".login input")
     valueInput.addEventListener('keydown', function (event) {
-
         if (event.keyCode == 13 && valueInput.value != "") {
             userName = valueInput.value
             valueInput.value = ""
@@ -127,6 +126,7 @@ function renderMessages(success) {
         messages.scrollIntoView({ block: "end", behavior: "smooth" })
     }
     firstRunRenderMessages = false
+
     let lastMessageIndex = messagesList.length - 1
     messageListLog = (messagesList[lastMessageIndex].from + messagesList[lastMessageIndex].text + messagesList[lastMessageIndex].time)
 }
@@ -145,7 +145,6 @@ function sendMessage() {
             axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(searchMessages).catch(offline)
         }
     })
-
     if (valueInput.value != "") {
         messageObjetc = {
             from: userName,
@@ -235,7 +234,6 @@ function selectUser(element) {
         const optionClass = element.parentNode
         const usersClass = optionClass.parentNode
         const userName = optionClass.querySelector("p").innerHTML
-        // Caso o elemento a ser clicado já não esteja selecionado seleciona o mesmo
         if (usersClass.querySelector(".selected") != optionClass && usersClass.querySelector(".selected")) {
             usersClass.querySelector(".selected").remove()
             optionClass.innerHTML +=
