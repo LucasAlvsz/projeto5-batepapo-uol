@@ -84,7 +84,6 @@ setInterval(() => {
 
 // Faz uma requisição ao servidor para procurar pelas mensagens
 function searchMessages() {
-    console.log("CHAMEI");
     let promisse = axios.get("https://mock-api.driven.com.br/api/v4/uol/messages")
     promisse.then(renderMessages)
 }
