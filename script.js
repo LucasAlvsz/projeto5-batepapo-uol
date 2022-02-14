@@ -3,8 +3,8 @@
 const MAGIC = true
 const MESSAGESUPDATETIME = 3000
 const STATUSUPDATETIME = 5000
-const USERSONLINEUPDATETIME = 10000
-const TEMPOLOADING = 10000
+const USERSONLINEUPDATETIME = 1000
+const TEMPOLOADING = 5000
 // ---------------------------------- \\
 let userName
 let nameObject = {
@@ -27,6 +27,15 @@ let messageListLog = ""
 // Realizar o login
 function login() {
     const valueInput = document.querySelector(".login input")
+    valueInput.addEventListener('keydown', function (event) {
+        // Caso pressione enter 
+        if (event.keyCode == 13 && valueInput.value != "") {
+            userName = valueInput.value
+            valueInput.value = ""
+            nameObject.name = userName
+            axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
+        }
+    })
     if (valueInput.value != "") {
         userName = valueInput.value
         valueInput.value = ""
@@ -48,7 +57,7 @@ function serverTestLoginSuccess() {
     `
     setTimeout(() => {
         loginClass.classList.add("hidden")
-    }, TEMPOLOADING);
+    }, TEMPOLOADING)
 }
 // Erro ao logar
 function serverTestLoginError() {
@@ -66,13 +75,12 @@ function userStatus() {
 }
 // Caso o usuario esteja offline
 function offline() {
-    location.reload();
+    location.reload()
 }
 // A cada 5 segundos verifica se o usuario esta online
 setInterval(() => {
     userStatus()
-}, STATUSUPDATETIME);
-
+}, STATUSUPDATETIME)
 
 // Faz uma requisição ao servidor para procurar pelas mensagens
 function searchMessages() {
@@ -82,7 +90,7 @@ function searchMessages() {
 // A cada 3 segundos verifica se existem novas mensagens
 setInterval(() => {
     searchMessages()
-}, MESSAGESUPDATETIME);
+}, MESSAGESUPDATETIME)
 
 // Mostra as mensagens na tela
 function renderMessages(success) {
@@ -123,7 +131,7 @@ function renderMessages(success) {
             </div>
             `
         }
-        messages.scrollIntoView({ block: "end", behavior: "smooth"});
+        messages.scrollIntoView({ block: "end", behavior: "smooth" })
     }
     firstRunRenderMessages = false
     // Armazena o conteudo da ultima mensagem
@@ -169,16 +177,26 @@ setInterval(() => {
     searchUsers()
 }, USERSONLINEUPDATETIME);
 
+//let usersOff = []
 // Mostra os usuarios na tela
 function renderUsers(users) {
     users = users.data
     const usersClass = document.querySelector(".activitys .users")
+    const allUsers = [...usersClass.querySelectorAll(".option")]
+    let filteredUsersOff = filterUsersOff(users, usersListLog)
+    for (let i = 0; i < filteredUsersOff.length; i++) {
+        for (let j = 0; j < allUsers.length; j++) {
+            if (filteredUsersOff[i] == allUsers[j].id) {
+                allUsers[j].remove()
+            }
+        }
+    }
     // filtra usuarios que ja existem na lista
-    let filteredUsers = users.filter(filterUsers);
+    let filteredUsers = users.filter(filterUsers)
     for (let i = 0; i < filteredUsers.length; ++i) {
         usersClass.innerHTML +=
-        `
-        <div class="option">
+            `
+        <div class="option" id="${filteredUsers[i].name}">
                     <ion-icon name="person-circle" onclick="selectUser(this)"></ion-icon>
                     <p onclick="selectUser(this)">${filteredUsers[i].name}</p>
                 </div>
@@ -195,6 +213,18 @@ function filterUsers(users) {
     }
     return true
 }
+function filterUsersOff(users, usersListLog) {
+    let arrayUsers = []
+    let arrayLog = []
+    for (let i = 0; i < usersListLog.length; i++) {
+        arrayUsers.push(usersListLog[i].name)
+    }
+    for (let i = 0; i < users.length; i++) {
+        arrayLog.push(users[i].name)
+    }
+    let difference = arrayUsers.filter(x => !arrayLog.includes(x));
+    return difference
+}
 // Função que mostra barra de atividade
 function activity() {
     const activityClass = document.querySelector(".overlay")
@@ -210,7 +240,7 @@ function selectUser(element) {
     const usersClass = optionClass.parentNode
     const userName = optionClass.querySelector("p").innerHTML
     // Caso o elemento a ser clicado já não esteja selecionado seleciona o mesmo
-    if (usersClass.querySelector(".selected") != optionClass) {
+    if (usersClass.querySelector(".selected") != optionClass && usersClass.querySelector(".selected")) {
         usersClass.querySelector(".selected").remove()
         optionClass.innerHTML +=
             `
@@ -220,6 +250,17 @@ function selectUser(element) {
             </svg>
         </div>
         `
+    }
+    // Se nenhum elemento estiver selecionado seleciona o mesmo
+    else {
+        optionClass.innerHTML +=
+            `
+        <div class="selected">
+            <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+            <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+    `
     }
     document.querySelector("footer p span").innerHTML = userName
     userSelected = userName
@@ -250,4 +291,5 @@ function selectVisibility(element) {
     }
 }
 // Chamando para carregar o "enter"
+login()
 sendMessage()

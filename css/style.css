@@ -34,7 +34,6 @@ header ion-icon:hover {
 main {
     width: 100%;
     height: calc(100vh - 160px);
-    /* topo | horizontal | inferior */
     margin: 80px 0 80px;
     overflow: auto;
     position: relative;
@@ -72,6 +71,14 @@ footer input {
 footer input::placeholder {
     font-style: italic;
     color: #000000;
+}
+
+footer input:focus {
+    outline: none;
+}
+
+footer input:focus::placeholder {
+    color: transparent;
 }
 
 footer input:nth-child(2) {
@@ -179,6 +186,14 @@ footer ion-icon {
     color: #AEAEAE;
 }
 
+.login .options input:focus {
+    outline: none;
+}
+
+.login .options input:focus::placeholder {
+    color: transparent;
+}
+
 .login input:nth-child(2) {
     width: 109px;
     height: 45px;
@@ -272,7 +287,8 @@ footer ion-icon {
     align-items: center;
     padding: 0 0 0 17px;
 }
-.activitys .users{
+
+.activitys .users {
     max-height: 70%;
     overflow-y: auto;
 }
@@ -290,9 +306,11 @@ footer ion-icon {
     font-size: 25px;
     margin-right: 8px;
 }
-.visibility{
+
+.visibility {
     margin-bottom: 20px;
 }
+
 .visibility .title {
     height: 66px;
     justify-content: center;

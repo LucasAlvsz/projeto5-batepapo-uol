@@ -32,25 +32,15 @@
     <div class="overlay hidden">
         <div class="shadow" onclick="exitActivity(this)"></div>
         <div class="activitys">
-            
-                <div class="title">
-                    <p>Escolha um contato para enviar mensagem:</p>
+            <div class="title">
+                <p>Escolha um contato para enviar mensagem:</p>
+            </div>
+            <div class="users">
+                <div class="option">
+                    <ion-icon name="people" onclick="selectUser(this)"></ion-icon>
+                    <p onclick="selectUser(this)">Todos</p>
                 </div>
-                <div class="users">
-                    <div class="option">
-                        <ion-icon name="people" onclick="selectUser(this)"></ion-icon>
-                        <p onclick="selectUser(this)">Todos</p>
-                        <div class="selected">
-                            <svg width="13" height="11" viewBox="0 0 13 11" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-         
-
+            </div>
             <div class="visibility">
                 <div class="title">
                     <p>Escolha a visibilidade:</p>
