@@ -153,7 +153,7 @@ function sendMessage() {
                 type: messageVisibility
             }
             valueInput.value = ""
-            axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then()
+            axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(searchMessages()).catch(offline)
         }
     })
     //Enviar mensagem ao clicar no icone
@@ -165,7 +165,7 @@ function sendMessage() {
             type: messageVisibility
         }
         valueInput.value = ""
-        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then()
+        axios.post("https://mock-api.driven.com.br/api/v4/uol/messages", messageObjetc).then(searchMessages()).catch(offline)
     }
 }
 
