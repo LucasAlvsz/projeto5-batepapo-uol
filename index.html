@@ -22,11 +22,10 @@
             <img src="img/logo-uol.png" alt="logo-uol">
         </div>
         <div class="options">
-            <input type="text" placeholder="Digite seu nome">
-            <input type="submit" value="Entrar" onclick="login()">
+            <input type="text" placeholder="Digite seu nome" data-identifier="enter-name">
+            <input type="submit" value="Entrar" onclick="login()" data-identifier="start">
             <p class="hidden">Este nome de usuario já existe Por favor selecione outro!</p>
         </div>
-
 
     </div>
     <div class="overlay hidden">
@@ -36,16 +35,22 @@
                 <p>Escolha um contato para enviar mensagem:</p>
             </div>
             <div class="users">
-                <div class="option">
+                <div class="option todos" data-identifier="participant">
                     <ion-icon name="people" onclick="selectUser(this)"></ion-icon>
                     <p onclick="selectUser(this)">Todos</p>
+                    <div class="selected">
+                        <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div class="visibility">
                 <div class="title">
                     <p>Escolha a visibilidade:</p>
                 </div>
-                <div class="option public">
+                <div class="option public" data-identifier="visibility">
                     <ion-icon name="lock-open" onclick="selectVisibility(this)"></ion-icon>
                     <p onclick="selectVisibility(this)">Público</p>
                     <div class="selected">
@@ -56,7 +61,7 @@
                     </div>
                 </div>
 
-                <div class="option privated">
+                <div class="option privated" data-identifier="visibility">
                     <ion-icon name="lock-closed" onclick="selectVisibility(this)"></ion-icon>
                     <p onclick="selectVisibility(this)">Reservadamente</p>
                 </div>
@@ -77,7 +82,7 @@
     </main>
     <footer>
         <input placeholder="Escreva aqui..." type="text">
-        <input type="submit" value="" onclick="sendMessage()">
+        <input type="submit" value="" onclick="sendMessage()" data-identifier="send-message">
         <ion-icon class="enviar" name="paper-plane-outline"></ion-icon>
         <p>Enviando para <span>Todos</span> <b>(público)</b></p>
     </footer>

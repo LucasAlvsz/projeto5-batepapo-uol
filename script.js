@@ -1,10 +1,9 @@
 // Declarando Variaveis
 // -------- MAGIC NUMBERS ---------- \\
-const MAGIC = true
 const MESSAGESUPDATETIME = 3000
 const STATUSUPDATETIME = 5000
-const USERSONLINEUPDATETIME = 1000
-const TEMPOLOADING = 5000
+const USERSONLINEUPDATETIME = 10000
+const TEMPOLOADING = 1500
 // ---------------------------------- \\
 let userName
 let nameObject = {
@@ -36,6 +35,7 @@ function login() {
             axios.post("https://mock-api.driven.com.br/api/v4/uol/participants", nameObject).then(serverTestLoginSuccess).catch(serverTestLoginError)
         }
     })
+    // Ao clicar no botão 
     if (valueInput.value != "") {
         userName = valueInput.value
         valueInput.value = ""
@@ -108,25 +108,26 @@ function renderMessages(success) {
             }
         }
     }
+    // Renderiza as mensagens na tela
     for (let i = index; i <= messagesList.length - 1; i++) {
         if (messagesList[i].type == "status") {
             messages.innerHTML +=
                 `
-            <div class="message status">
+            <div class="message status" data-identifier="message">
                 <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span>${messagesList[i].text}</p>
             </div>
             `
         } else if (messagesList[i].type == "message") {
             messages.innerHTML +=
                 `
-            <div class="message">
+            <div class="message" data-identifier="message">
             <p><span class="hour">(${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
             </div>
             `
         } else if (messagesList[i].type == "private_message" && (messagesList[i].to == userName || messagesList[i].to == "Todos" || messagesList[i].from == userName)) {
             messages.innerHTML +=
                 `
-            <div class="message private">
+            <div class="message private" data-identifier="message">
             <p><span class="hour"> (${messagesList[i].time}) </span> <span class="user"> ${messagesList[i].from} </span> reservadamente para <span class="user"> ${messagesList[i].to}: </span> ${messagesList[i].text} </p>
             </div>
             `
@@ -187,6 +188,8 @@ function renderUsers(users) {
     for (let i = 0; i < filteredUsersOff.length; i++) {
         for (let j = 0; j < allUsers.length; j++) {
             if (filteredUsersOff[i] == allUsers[j].id) {
+                if (allUsers[j].querySelector(".selected"))
+                    selectUser("todos")
                 allUsers[j].remove()
             }
         }
@@ -196,7 +199,7 @@ function renderUsers(users) {
     for (let i = 0; i < filteredUsers.length; ++i) {
         usersClass.innerHTML +=
             `
-        <div class="option" id="${filteredUsers[i].name}">
+        <div class="option" id="${filteredUsers[i].name}" data-identifier="participant">
                     <ion-icon name="person-circle" onclick="selectUser(this)"></ion-icon>
                     <p onclick="selectUser(this)">${filteredUsers[i].name}</p>
                 </div>
@@ -213,6 +216,7 @@ function filterUsers(users) {
     }
     return true
 }
+// Filtra usuarios offline
 function filterUsersOff(users, usersListLog) {
     let arrayUsers = []
     let arrayLog = []
@@ -236,13 +240,8 @@ function exitActivity(shadowClass) {
 }
 // Função para selecionar um usuario
 function selectUser(element) {
-    const optionClass = element.parentNode
-    const usersClass = optionClass.parentNode
-    const userName = optionClass.querySelector("p").innerHTML
-    // Caso o elemento a ser clicado já não esteja selecionado seleciona o mesmo
-    if (usersClass.querySelector(".selected") != optionClass && usersClass.querySelector(".selected")) {
-        usersClass.querySelector(".selected").remove()
-        optionClass.innerHTML +=
+    if (element == "todos") {
+        document.querySelector(".users .todos").innerHTML +=
             `
         <div class="selected">
             <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"> 
@@ -250,20 +249,28 @@ function selectUser(element) {
             </svg>
         </div>
         `
+        document.querySelector("footer p span").innerHTML = "Todos"
+        userSelected = "Todos"
     }
-    // Se nenhum elemento estiver selecionado seleciona o mesmo
     else {
-        optionClass.innerHTML +=
-            `
+        const optionClass = element.parentNode
+        const usersClass = optionClass.parentNode
+        const userName = optionClass.querySelector("p").innerHTML
+        // Caso o elemento a ser clicado já não esteja selecionado seleciona o mesmo
+        if (usersClass.querySelector(".selected") != optionClass && usersClass.querySelector(".selected")) {
+            usersClass.querySelector(".selected").remove()
+            optionClass.innerHTML +=
+                `
         <div class="selected">
             <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"> 
             <path d="M11 2L4.7 9L2 6.375" stroke="#28BB25" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </div>
-    `
+        `
+        }
+        document.querySelector("footer p span").innerHTML = userName
+        userSelected = userName
     }
-    document.querySelector("footer p span").innerHTML = userName
-    userSelected = userName
 }
 // Função que seleciona a visibilidade da mensagem
 function selectVisibility(element) {
@@ -293,3 +300,7 @@ function selectVisibility(element) {
 // Chamando para carregar o "enter"
 login()
 sendMessage()
+
+// Carregando mensagens e usuarios 
+searchMessages()
+searchUsers()
